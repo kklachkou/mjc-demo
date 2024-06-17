@@ -9,7 +9,7 @@
 * start both apps
 * execute POST request on order service
 
-### Request example
+### Order Request example
 ```
 POST http://localhost:8081/v1/orders
 Content-Type: application/json
@@ -26,6 +26,12 @@ Content-Type: application/json
     }
   ]
 }
+```
+
+### Fetch Products request example
+```
+POST http://localhost:8081/v1/orders
+Content-Type: application/json
 ```
 
 ### Request Flow
