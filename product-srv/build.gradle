@@ -1,0 +1,104 @@
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.0'
+	id 'io.spring.dependency-management' version '1.1.5'
+	id "org.openapi.generator" version "7.5.0"
+	id 'maven-publish'
+}
+
+group = 'org.mjc'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '21'
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation "org.springframework.boot:spring-boot-starter-webflux"
+	implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
+	implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
+
+	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+sourceSets.main.java.srcDirs += "$rootDir/generated/src/main/java"
+sourceSets.main.java.srcDirs += "$rootDir/generated-client/src/main/java"
+
+openApiGenerate {
+	generatorName = "spring"
+	library = "spring-boot"
+	inputSpec = "$rootDir/product-srv.yaml"
+	outputDir = "$rootDir/generated"
+	modelNameSuffix = "Dto"
+	apiPackage = "org.mjc.product.controller"
+	modelPackage = "org.mjc.product.controller.dto"
+	configOptions = [
+			generatedConstructorWithRequiredArgs: "false",
+			interfaceOnly                       : "true",
+			useSpringController                 : "true",
+			useTags                             : "true",
+			dateLibrary                         : "java8",
+			skipDefaultInterface                : "true",
+			useSpringBoot3                      : "true",
+			useJakartaEe                        : "true",
+			useResponseEntity                   : "false",
+			additionalModelTypeAnnotations      :
+					"""@lombok.Builder
+                       @lombok.extern.jackson.Jacksonized
+                       @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)"""
+	]
+}
+
+task openApiGenerateClient(type: GenerateTask) {
+	generatorName = "java"
+	library = "webclient"
+	inputSpec = "$rootDir/product-srv.yaml"
+	outputDir = "$rootDir/generated-client"
+	modelNameSuffix = "Dto"
+	modelPackage = "org.mjc.order.client.dto"
+	apiPackage = "org.mjc.order.client.api"
+	generateApiTests = false
+	generateModelTests = false
+	configOptions = [
+			useJakartaEe                  : "true",
+			dateLibrary                   : "java8"
+	]
+}
+
+tasks.named('openApiGenerate') {
+	outputs.upToDateWhen { false }
+	outputs.cacheIf { false }
+}
+
+compileJava.dependsOn "openApiGenerate"
+compileJava.dependsOn "openApiGenerateClient"
+
+task cleanGenerated(type: Delete) {
+	delete "$rootDir/generated"
+	delete "$rootDir/generated-client"
+}
+
+clean.dependsOn cleanGenerated

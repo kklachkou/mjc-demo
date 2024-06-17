@@ -1,0 +1,65 @@
+openapi: 3.0.0
+info:
+  title: Product API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: Product
+
+paths:
+  /v1/products:
+    get:
+      summary: Get all products
+      operationId: getProducts
+      tags:
+        - Product
+      responses:
+        '200':
+          description: A list of products.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+  /v1/products/{id}:
+    get:
+      summary: Get a product by its ID
+      operationId: getProduct
+      tags:
+        - Product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A single product.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        price:
+          type: string
+          format: decimal
+        quantity:
+          type: integer
+          format: int32
+      required:
+        - id
+        - name
+        - price
+        - quantity

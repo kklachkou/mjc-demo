@@ -1,0 +1,65 @@
+openapi: 3.0.0
+info:
+  title: Order API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: Order
+paths:
+  /v1/orders:
+    post:
+      summary: Create a new order
+      tags:
+        - Order
+      operationId: createOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRequest'
+      responses:
+        '201':
+          description: Order created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+        default:
+          description: Unexpected error
+components:
+  schemas:
+    OrderRequest:
+      type: object
+      properties:
+        items:
+          type: array
+          description: List of products to order
+          items:
+            type: object
+            properties:
+              productId:
+                type: string
+                format: uuid
+                description: Identifier for the product
+              quantity:
+                type: integer
+                description: Quantity of the product
+    OrderResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the order
+        status:
+          type: string
+          enum:
+            - SUCCEEDED
+            - FAILED
+          description: The status of the order
+        totalPrice:
+          type: string
+          format: decimal
+          description: Total price of the order

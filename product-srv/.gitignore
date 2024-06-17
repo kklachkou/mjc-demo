@@ -1,7 +1,9 @@
 .gradle
-.idea
+pet-srv.iml
 **/build/
 !src/**/build/
+generated
+generated-client
 
 # Ignore Gradle GUI config
 gradle-app.setting
