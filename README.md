@@ -30,7 +30,7 @@ Content-Type: application/json
 
 ### Fetch Products request example
 ```
-POST http://localhost:8081/v1/orders
+GET http://localhost:8080/v1/products
 Content-Type: application/json
 ```
 
