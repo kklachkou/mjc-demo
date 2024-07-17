@@ -1,0 +1,6 @@
+spring:
+    application:
+        name: product-srv
+
+server:
+    port: 8080

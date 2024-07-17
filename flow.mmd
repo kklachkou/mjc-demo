@@ -1,0 +1,10 @@
+sequenceDiagram
+    autonumber
+    actor u as User
+    participant ord as Order Service
+    participant prd as Product Service
+    u->>ord: Make Order
+    ord->>prd: Fetch Products Details
+    ord->>ord: Count Order Total Price
+    ord->>u: Reply with order status
+

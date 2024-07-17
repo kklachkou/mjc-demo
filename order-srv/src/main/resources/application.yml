@@ -1,0 +1,6 @@
+spring:
+    application:
+        name: order-srv
+
+server:
+    port: 8081

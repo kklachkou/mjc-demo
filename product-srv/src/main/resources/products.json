@@ -1,0 +1,32 @@
+[
+  {
+    "id": "35cd851f-2276-4b98-9ed5-a7af4f0811f7",
+    "name": "Product 1",
+    "quantity": 1,
+    "price": 1.00
+  },
+  {
+    "id": "5c64e76a-0478-4c5c-bf1d-db1124adb787",
+    "name": "Product 2",
+    "quantity": 2,
+    "price": 2.00
+  },
+  {
+    "id": "d1b3fc89-6b98-4c80-a9f4-6ff345d32e8e",
+    "name": "Product 3",
+    "quantity": 3,
+    "price": 3.00
+  },
+  {
+    "id": "b2a1d7f9-af1a-4b45-9fd0-3f2f8a60a41b",
+    "name": "Product 4",
+    "quantity": 4,
+    "price": 4.00
+  },
+  {
+    "id": "abdd9418-4ee0-4d69-ad08-632b0ca477c1",
+    "name": "Product 5",
+    "quantity": 5,
+    "price": 5.00
+  }
+]
