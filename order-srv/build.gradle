@@ -26,6 +26,7 @@ repositories {
 }
 
 dependencies {
+	implementation 'org.mjc.order.client:product-api-client:1.0.0'
 	//	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
 	implementation 'org.springframework.boot:spring-boot-starter-web'
