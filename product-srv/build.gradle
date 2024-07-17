@@ -1,7 +1,10 @@
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.3.0'
 	id 'io.spring.dependency-management' version '1.1.5'
+	id "org.openapi.generator" version "7.5.0"
 	id 'maven-publish'
 }
 
@@ -43,3 +46,68 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+sourceSets.main.java.srcDirs += "$rootDir/generated/src/main/java"
+sourceSets.main.java.srcDirs += "$rootDir/generated-client/src/main/java"
+
+openApiGenerate {
+	generatorName = "spring"
+	library = "spring-boot"
+	inputSpec = "$rootDir/product-spec.yaml"
+	outputDir = "$rootDir/generated"
+	modelNameSuffix = "Dto"
+	apiPackage = "org.mjc.product.controller"
+	modelPackage = "org.mjc.product.controller.dto"
+	configOptions = [
+			generatedConstructorWithRequiredArgs: "false",
+			interfaceOnly                       : "true",
+			useSpringController                 : "true",
+			useTags                             : "true",
+			dateLibrary                         : "java8",
+			skipDefaultInterface                : "true",
+			useSpringBoot3                      : "true",
+			useJakartaEe                        : "true",
+			useResponseEntity                   : "false",
+			additionalModelTypeAnnotations      :
+					"""@lombok.Builder
+                       @lombok.extern.jackson.Jacksonized
+                       @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)"""
+	]
+}
+
+task openApiGenerateClient(type: GenerateTask) {
+	generatorName = "java"
+	library = "webclient"
+	inputSpec = "$rootDir/product-spec.yaml"
+	outputDir = "$rootDir/generated-client"
+	modelNameSuffix = "Dto"
+	modelPackage = "org.mjc.order.client.dto"
+	apiPackage = "org.mjc.order.client.api"
+	generateApiTests = false
+	generateModelTests = false
+	configOptions = [
+			useJakartaEe                  : "true",
+			dateLibrary                   : "java8",
+			useSpringBoot3                : "true",
+			groupId                       : "org.mjc.order.client",
+			artifactId                    : "product-api-client",
+			artifactVersion               : "1.0.0",
+			additionalModelTypeAnnotations:
+					"""@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)"""
+	]
+}
+
+tasks.named('openApiGenerate') {
+	outputs.upToDateWhen { false }
+	outputs.cacheIf { false }
+}
+
+compileJava.dependsOn "openApiGenerate"
+compileJava.dependsOn "openApiGenerateClient"
+
+task cleanGenerated(type: Delete) {
+	delete "$rootDir/generated"
+	delete "$rootDir/generated-client"
+}
+
+clean.dependsOn cleanGenerated
