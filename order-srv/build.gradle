@@ -1,7 +1,10 @@
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.3.0'
 	id 'io.spring.dependency-management' version '1.1.5'
+	id "org.openapi.generator" version "7.5.0"
 }
 
 group = 'org.mjc'
@@ -42,3 +45,46 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+sourceSets.main.java.srcDirs += "$rootDir/generated/src/main/java"
+
+openApiGenerate {
+	generatorName = "spring"
+	library = "spring-boot"
+	inputSpec = "$rootDir/order-spec.yaml"
+	outputDir = "$rootDir/generated"
+	modelNameSuffix = "Dto"
+	apiPackage = "org.mjc.order.controller"
+	modelPackage = "org.mjc.order.controller.dto"
+	typeMappings = [
+			OffsetDateTime: "java.time.LocalDateTime"
+	]
+	configOptions = [
+			generatedConstructorWithRequiredArgs: "false",
+			interfaceOnly                       : "true",
+			useSpringController                 : "true",
+			useTags                             : "true",
+			dateLibrary                         : "java8",
+			skipDefaultInterface                : "true",
+			useSpringBoot3                      : "true",
+			useJakartaEe                        : "true",
+			useResponseEntity                   : "false",
+			additionalModelTypeAnnotations      :
+					"""@lombok.Builder
+                       @lombok.extern.jackson.Jacksonized
+                       @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)"""
+	]
+}
+
+tasks.named('openApiGenerate') {
+	outputs.upToDateWhen { false }
+	outputs.cacheIf { false }
+}
+
+compileJava.dependsOn "openApiGenerate"
+
+task cleanGenerated(type: Delete) {
+	delete "$rootDir/generated"
+}
+
+clean.dependsOn cleanGenerated
